@@ -1,0 +1,31 @@
+# ============================================================
+# .gitignore — Tells Git which files to IGNORE
+# ============================================================
+# WHY?
+# Some files are generated automatically (like the venv folder
+# or compiled Python files). They don't belong in version control
+# because anyone can regenerate them.
+# ============================================================
+
+# Virtual environment folder (large, everyone creates their own)
+venv/
+.venv/
+
+# Python compiled files (auto-generated, not needed in Git)
+__pycache__/
+*.py[cod]
+
+# Jupyter Notebook checkpoints (auto-saved backups)
+.ipynb_checkpoints/
+
+# IDE settings (personal to each developer)
+.vscode/
+.idea/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Trained model files (can be large)
+models/*.pkl
+models/*.joblib

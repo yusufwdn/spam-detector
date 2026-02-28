@@ -1,0 +1,25 @@
+# ============================================================
+# requirements.txt — Lists all Python packages this project needs
+# ============================================================
+# WHY THIS FILE?
+# When someone else (or you on a different computer) wants to run
+# this project, they just run: pip install -r requirements.txt
+# and all the packages are installed automatically.
+# ============================================================
+
+# --- Data Handling ---
+pandas==2.2.3          # Like Excel in Python — read/write CSV, filter rows, etc.
+numpy==2.2.3           # Fast math operations on arrays of numbers
+
+# --- Machine Learning ---
+scikit-learn==1.6.1    # The main ML library — contains models, evaluation tools, etc.
+
+# --- Data Visualization ---
+matplotlib==3.10.1     # Basic chart library (line plots, bar charts, etc.)
+seaborn==0.13.2        # Prettier charts built on top of matplotlib
+
+# --- Natural Language Processing (NLP) ---
+nltk==3.9.1            # Toolkit for processing human language (tokenizing, stopwords, etc.)
+
+# --- Interactive Development ---
+jupyter==1.1.1         # Jupyter Notebook — write code in cells with instant output
