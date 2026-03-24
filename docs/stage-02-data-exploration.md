@@ -33,6 +33,8 @@ A dataset is a structured collection of **labeled examples**. For our project, e
 The `comment` column is the **feature** (what the model reads).
 The `label` column is the **target** (what the model must predict).
 
+> **Analogy:** Think of a job application form. The information you fill in (name, skills, experience) are the **features** — the inputs. Whether you got hired or rejected is the **label** — the output the model is trying to predict.
+
 ### 2. What is Exploratory Data Analysis (EDA)?
 
 EDA means **studying your data before doing anything else**. Just like a doctor examines a patient before prescribing medicine, we examine our dataset before training any model.
@@ -56,9 +58,13 @@ spam : 40  (50%)
 
 Our dataset is **perfectly balanced**. This is important because if we had 90% ham and 10% spam, a model could cheat by always predicting "ham" and still get 90% accuracy — while being completely useless for its real job.
 
+> **Analogy:** Imagine a security guard whose only job is to spot shoplifters (10% of all shoppers). If the guard just waves everyone through and never stops anyone, they are "90% correct" — but they've caught zero shoplifters. A balanced dataset prevents this kind of lazy shortcut.
+
 ### 4. Feature Engineering — Comment Length
 
 We created a new column `comment_length` by counting characters in each comment. This is our first example of **feature engineering** — deriving new information from existing data.
+
+> **Analogy:** A detective doesn't just read a suspect's diary (raw data). They also note *how long* it is, *how many times* certain names appear, *what time* entries were written. Those derived observations are engineered features — new clues built from the original evidence.
 
 ```python
 df['comment_length'] = df['comment'].apply(len)
@@ -83,6 +89,8 @@ def get_top_words(texts, n=20):
         all_words.extend(words)
     return Counter(all_words).most_common(n)
 ```
+
+> **What does `r'\b[a-z]+\b'` mean?** It is a **regular expression** (a text search pattern) that means: "find any sequence of one or more lowercase letters that forms a complete word". The `\b` marks word boundaries (so "casino" inside "casino99" is still found correctly). Think of it as a net that only catches whole words, not numbers or punctuation.
 
 ---
 

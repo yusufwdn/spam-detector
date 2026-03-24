@@ -44,6 +44,8 @@ We used `re.sub(r'[^a-z ]', '', text)` which means:
 
 This removes punctuation, digits, and special characters in one line.
 
+> **Analogy:** Imagine a bouncer at a club. The rule is "only lowercase letters and spaces are allowed in". The `^` inside `[^a-z ]` means "NOT" — so the bouncer removes anyone who is not a letter or space. Everything else (!, 9, @, ?) gets thrown out.
+
 ### 3. Tokenization
 
 Tokenization splits a sentence string into a **list of individual word tokens**.
@@ -59,10 +61,12 @@ We used the simplest approach — Python's built-in `.split()` which splits on w
 Stopwords are extremely common English words that carry no useful signal for classification.
 NLTK's English stopword list contains **198 words** including: `the, a, is, at, now, get, and, or, with, for...`
 
-We remove them using a set lookup (fast O(1) operation):
+We remove them using a set lookup (very fast — like checking a name against an index card, not reading an entire book):
 ```python
 tokens = [t for t in tokens if t not in STOPWORDS]
 ```
+
+> **Analogy:** Imagine you're trying to identify a spam letter by its unique words. Words like "the", "a", and "is" appear in *every* letter — spam or not — so they're useless for telling them apart. Stopwords are those useless filler words. Removing them is like crossing out all the boring common words so the suspicious ones stand out.
 
 ### 5. Stemming vs Lemmatization
 
@@ -78,11 +82,15 @@ Both reduce words to a common base form so variations count as the same feature.
 
 **Stemming** (what we used) is fast and rule-based. It can produce non-words like `"tutori"` from `"tutorials"` — but that's fine for our classifier since it just needs consistent tokens.
 
+> **Analogy:** Think of a stemmer as a pair of scissors that trims suffixes off the end of words. It doesn't know real language — it just mechanically snips endings. So "tutorials" loses "-als" to become "tutori". It's a little rough, but as long as *both* "tutorial" and "tutorials" become "tutori", the model treats them as the same word — which is all we need.
+
 **Lemmatization** uses a dictionary to find real words but is slower. For thesis purposes, either works.
 
 ### 6. DRY Principle — `clean_text()` as a Reusable Function
 
 Rather than repeating 5 preprocessing steps every time, we encapsulated them into a single function. This is the **Don't Repeat Yourself (DRY)** principle — a fundamental software engineering practice.
+
+> **Analogy:** Instead of hand-writing your address on 50 envelopes, you carve a rubber stamp and stamp them all. The `clean_text()` function is that rubber stamp. You define it once and "stamp" every comment in one line: `df['comment'].apply(clean_text)`.
 
 The function also lives in `src/preprocessing.py` so any notebook or script can import it:
 ```python
