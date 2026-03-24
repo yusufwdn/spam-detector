@@ -69,7 +69,7 @@ instructions for that stage.
 | **1** | [Stage 1 - Environment Setup](docs/stage-01-setup.md) | Completed |
 | **2** | [Stage 2 - Data Collection & Exploration](docs/stage-02-data-exploration.md) | Completed |
 | **3** | [Stage 3 - Text Preprocessing](docs/stage-03-text-preprocessing.md) | Completed |
-| **4** | [Stage 4 - Feature Extraction](docs/stage-04-feature-extraction.md) | Not Started |
+| **4** | [Stage 4 - Feature Extraction](docs/stage-04-feature-extraction.md) | Completed |
 | **5** | [Stage 5 - Model Training](docs/stage-05-model-training.md) | Not Started |
 | **6** | [Stage 6 - Model Evaluation](docs/stage-06-model-evaluation.md) | Not Started |
 | **7** | [Stage 7 - Model Improvement & Tuning](docs/stage-07-model-improvement.md) | Not Started |
