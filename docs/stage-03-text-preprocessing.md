@@ -1,75 +1,151 @@
 # Stage 3 — Text Preprocessing
-### Status: 🔒 Not Started Yet
+### Status: ✅ Completed
 
 ← [Stage 2 — Data Exploration](stage-02-data-exploration.md) | [Back to Index](../README.md) | Next: [Stage 4 — Feature Extraction →](stage-04-feature-extraction.md)
 
 ---
 
-> 📌 This stage will be written when Stage 3 begins.
-> Complete Stages 1 and 2 first.
+## What You Learned in This Stage
+
+- Why raw text is "dirty" and must be cleaned before feeding it to a model
+- What **tokenization** means and how `.split()` achieves it
+- What **stopwords** are and how NLTK's built-in list works
+- What **stemming** is and how the Porter algorithm reduces words to roots
+- How to use **regular expressions** (`re.sub`) to strip punctuation and numbers
+- How to build a reusable, documented `clean_text()` function
+- How to apply a function to a whole DataFrame column with `.apply()`
+- How to save a processed dataset to `data/processed/`
 
 ---
 
-## What You Will Learn in This Stage
+## Key Concepts
 
-- Why raw text is "dirty" and needs to be cleaned
-- What **tokenization** is (splitting text into words)
-- What **stopwords** are and why we remove them
-- What **stemming** and **lemmatization** are
-- How to lowercase text, remove punctuation and numbers
-- How to build a reusable text cleaning function
+### 1. Why Does Text Need Preprocessing?
 
----
+Raw text has noise that adds no signal but increases the model's workload:
 
-## Key Concepts (Preview)
-
-### Why Do We Need to Preprocess Text?
-
-Raw text from the internet is messy:
-- "CASINO!!!" and "casino" should be treated as the same word
-- "the", "is", "a" carry no meaning — they're noise
-- Punctuation and emojis confuse models
-
-Preprocessing **standardizes and simplifies** text so the model focuses on
-what actually matters.
-
-### What is Tokenization?
-Splitting a sentence into individual words (tokens):
-
-```
-"Win big at Casino99!" → ["Win", "big", "at", "Casino99", "!"]
-```
-
-### What are Stopwords?
-Common words that carry almost no meaning:
-- "the", "is", "at", "which", "on", "a", "an", "I", "we"
-
-We remove them so the model doesn't waste attention on them.
-
-### What is Stemming vs Lemmatization?
-Both reduce words to their root form:
-
-| Original | Stemming | Lemmatization |
+| Problem | Example | Solution |
 |---|---|---|
-| "running" | "run" | "run" |
-| "casinos" | "casino" | "casino" |
-| "better" | "better" | "good" |
+| Mixed case | "Casino" vs "casino" | Lowercase |
+| Punctuation | "win!!!" | Remove with regex |
+| Numbers in words | "Casino99" | Remove digits |
+| Common noise words | "the", "is", "at" | Remove stopwords |
+| Word variants | "betting", "bets", "betted" | Stemming |
 
-Lemmatization is more accurate; stemming is faster.
+After preprocessing: `"Join Casino99 NOW!!! Get FREE spins!!!"` → `"join casino get free spin"`
+
+### 2. Regular Expressions (regex)
+
+A **regular expression** is a pattern that describes what text to match.
+We used `re.sub(r'[^a-z ]', '', text)` which means:
+- `re.sub` = find and replace
+- `[^a-z ]` = any character that is NOT a lowercase letter or space
+- `''` = replace with nothing (delete it)
+
+This removes punctuation, digits, and special characters in one line.
+
+### 3. Tokenization
+
+Tokenization splits a sentence string into a **list of individual word tokens**.
+We used the simplest approach — Python's built-in `.split()` which splits on whitespace:
+
+```python
+"join casino get free spin".split()
+# -> ['join', 'casino', 'get', 'free', 'spin']
+```
+
+### 4. Stopwords
+
+Stopwords are extremely common English words that carry no useful signal for classification.
+NLTK's English stopword list contains **198 words** including: `the, a, is, at, now, get, and, or, with, for...`
+
+We remove them using a set lookup (fast O(1) operation):
+```python
+tokens = [t for t in tokens if t not in STOPWORDS]
+```
+
+### 5. Stemming vs Lemmatization
+
+Both reduce words to a common base form so variations count as the same feature.
+
+| Original | Porter Stemming | Lemmatization |
+|---|---|---|
+| betting | bet | bet |
+| spins | spin | spin |
+| casinos | casino | casino |
+| running | run | run |
+| better | better | good |
+
+**Stemming** (what we used) is fast and rule-based. It can produce non-words like `"tutori"` from `"tutorials"` — but that's fine for our classifier since it just needs consistent tokens.
+
+**Lemmatization** uses a dictionary to find real words but is slower. For thesis purposes, either works.
+
+### 6. DRY Principle — `clean_text()` as a Reusable Function
+
+Rather than repeating 5 preprocessing steps every time, we encapsulated them into a single function. This is the **Don't Repeat Yourself (DRY)** principle — a fundamental software engineering practice.
+
+The function also lives in `src/preprocessing.py` so any notebook or script can import it:
+```python
+from src.preprocessing import clean_text
+cleaned = clean_text("Join Casino99 NOW!!!")
+```
+
+---
+
+## Results from Our Dataset
+
+| Metric | Ham | Spam |
+|---|---|---|
+| Avg words (original) | 9.7 | 11.4 |
+| Avg words (cleaned) | 5.4 | 7.8 |
+| Reduction | 44.3% | 31.6% |
+
+- **Vocabulary before cleaning:** 380 unique words
+- **Vocabulary after cleaning:** 297 unique words
+- **Words removed:** 83 (21.8% reduction)
+- **Empty comments after cleaning:** 0
+
+Spam comments retained more words after cleaning because they contain more domain-specific non-stopwords (`casino`, `bonus`, `register`, `deposit`).
+
+---
+
+## Files Produced
+
+| File | Description |
+|---|---|
+| `notebooks/02_text_preprocessing.ipynb` | Step-by-step preprocessing notebook |
+| `src/preprocessing.py` | Reusable `clean_text()` module |
+| `data/processed/comments_clean.csv` | Cleaned dataset (80 rows, `comment` + `label`) |
+
+---
+
+## Notebook Structure
+
+| Section | What It Does |
+|---|---|
+| 1 — Imports | Load pandas, re, NLTK; download stopwords & punkt |
+| 2 — Load Data | Read `data/raw/comments.csv` |
+| 3 — Step-by-step | Apply each of the 5 steps to one example comment |
+| 4 — clean_text() | Define the full function with docstring + test cases |
+| 5 — Apply to Dataset | `.apply(clean_text)` on all 80 rows, before/after table |
+| 6 — Inspect Results | Word count stats + before/after histograms |
+| 7 — Save | Write `data/processed/comments_clean.csv` |
+| 8 — Summary | Vocabulary stats, full pipeline recap |
 
 ---
 
 ## Stage Checklist
 
-- [ ] Lowercase all text
-- [ ] Remove punctuation and special characters
-- [ ] Remove numbers
-- [ ] Tokenize text into words
-- [ ] Remove stopwords using NLTK
-- [ ] Apply stemming or lemmatization
-- [ ] Build a reusable `clean_text()` function
-- [ ] Apply cleaning to the full dataset
-- [ ] Save cleaned dataset to `data/processed/`
+- [x] Lowercase all text
+- [x] Remove punctuation and special characters
+- [x] Remove numbers
+- [x] Tokenize text into words
+- [x] Remove stopwords using NLTK (198 words)
+- [x] Apply Porter Stemming
+- [x] Build reusable `clean_text()` function with docstring
+- [x] Apply cleaning to the full dataset (80 rows)
+- [x] Save cleaned dataset to `data/processed/comments_clean.csv`
+- [x] Save reusable function to `src/preprocessing.py`
 
 ---
 
